@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { ref, computed } from 'vue';
 import FilterComponent from './FilterComponent.vue';
 
 const props = defineProps({
@@ -11,30 +11,17 @@ const emit = defineEmits(['changePage']);
 const currentPage = ref(1);
 const characterName = ref(null);
 const characterStatus = ref(null);
-const visiblePages = ref([]);
 
-watch(
-  () => props.totalPages,
-  (newValue) => {
-    visiblePages.value = createVisiblePages(newValue);
-    currentPage.value = 1;
-  }
-);
-
-watch(currentPage, () => {
-  visiblePages.value = createVisiblePages();
-});
-
-function createVisiblePages(newTotalPages = props.totalPages) {
+const visiblePages = computed(() => {
   const pages = [];
   const start = Math.max(1, currentPage.value - 5);
-  const end = Math.min(newTotalPages, start + 9);
+  const end = Math.min(props.totalPages, start + 9);
 
   for (let i = start; i <= end; ++i) {
     pages.push(i);
   }
   return pages;
-}
+});
 
 function nextPage() {
   if (currentPage.value >= props.totalPages) {
@@ -60,12 +47,9 @@ function goToPage(number) {
 function updateFilterNames(name, status) {
   characterName.value = name;
   characterStatus.value = status;
+  currentPage.value = 1;
   emit('changePage', 1, characterName.value, characterStatus.value);
 }
-
-onMounted(() => {
-  visiblePages.value = createVisiblePages();
-});
 </script>
 
 <template>
