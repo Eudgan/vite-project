@@ -11,6 +11,7 @@ const emit = defineEmits(['changePage']);
 const currentPage = ref(1);
 const characterName = ref(null);
 const characterStatus = ref(null);
+const firstPage = 1;
 
 const visiblePages = computed(() => {
   const pages = [];
@@ -32,7 +33,7 @@ function nextPage() {
 }
 
 function prevPage() {
-  if (currentPage.value <= 1) {
+  if (currentPage.value <= firstPage) {
     return;
   }
   --currentPage.value;
@@ -47,8 +48,8 @@ function goToPage(number) {
 function updateFilterNames(name, status) {
   characterName.value = name;
   characterStatus.value = status;
-  currentPage.value = 1;
-  emit('changePage', 1, characterName.value, characterStatus.value);
+  currentPage.value = firstPage;
+  emit('changePage', firstPage, characterName.value, characterStatus.value);
 }
 </script>
 
